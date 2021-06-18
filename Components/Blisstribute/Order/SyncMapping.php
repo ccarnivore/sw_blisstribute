@@ -1094,23 +1094,16 @@ class Shopware_Components_Blisstribute_Order_SyncMapping extends Shopware_Compon
                 if ($currentVoucher->getAttribute() != null) {
                     $coeExcludeSupplier = $currentVoucher->getAttribute()->getCoeExcludeSupplier();
 
-                    if ($coeExcludeSupplier != '') {
-                        $coeExcludeSupplier = str_replace(',', '|', $coeExcludeSupplier);
-                        $_coeExcludeSuppliers = explode('|', $coeExcludeSupplier);
-
-                        foreach ($_coeExcludeSuppliers as $_coeExcludeSupplier) {
-                            if (!empty($_coeExcludeSupplier) && ctype_digit($_coeExcludeSupplier)) {
-                                $coeExcludeSuppliers[] = $_coeExcludeSupplier;
-                            }
-                        }
+                    if (!empty($coeExcludeSupplier) {
+                        $coeExcludeSuppliers = array_filter(explode('|', $coeExcludeSupplier);
                     }
                 }
             }
 
-            $coeReducedArticle = null;
+            $coeReducedArticle = false;
             if ($coeReducedPlugin) {
                 if ($currentVoucher->getAttribute() != null) {
-                    $coeReducedArticle = $currentVoucher->getAttribute()->getCoeReducedArticle();
+                    $coeReducedArticle = (bool) $currentVoucher->getAttribute()->getCoeReducedArticle();
                 }
             }
 
@@ -1367,11 +1360,11 @@ class Shopware_Components_Blisstribute_Order_SyncMapping extends Shopware_Compon
             return true;
         }
 
-        if ($vouchersData[$voucherId]['coeReducedArticle'] == 1) {
+        if ($vouchersData[$voucherId]['coeReducedArticle']) {
             $customer = $this->getModelEntity()->getOrder()->getCustomer();
 
             if ($customer) {
-                $hasPseudoPrice = $this->container->get('db')->fetchOne("SELECT sap.pseudoprice FROM s_articles_prices sap LEFT JOIN s_articles_details sad ON sap.articleDetailsID = sad.id WHERE sad.ordernumber = ? AND sap.pricegroup = ? AND sap.pseudoprice > 0", [$product['articleNumber'], $customer->getGroupKey()]);
+                $hasPseudoPrice = $this->container->get('db')->fetchOne("SELECT sap.pseudoprice FROM s_articles_prices sap LEFT JOIN s_articles_details sad ON sap.articleDetailsID = sad.id WHERE sad.ordernumber = ? AND sap.pricegroup = ? AND ROUND(sap.pseudoprice, 2) > ROUND(sap.price, 2)", [$product['articleNumber'], $customer->getGroupKey()]);
 
                 if ($hasPseudoPrice) {
                     return true;
