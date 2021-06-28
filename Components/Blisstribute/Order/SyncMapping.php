@@ -1337,15 +1337,18 @@ class Shopware_Components_Blisstribute_Order_SyncMapping extends Shopware_Compon
         if ($voucher == null) {
             return true;
         }
+        
+        // check if voucher is strict for article and supplier
+        $restrictVoucher = !empty($voucher->getStrict());
 
         // check if article is valid for voucher
         $restrictedArticles = explode(';', $voucher->getRestrictArticles());
-        if (count($restrictedArticles) > 0 && in_array($product['legacy']['articleNumber'], $restrictedArticles)) {
+        if ($restrictVoucher && count($restrictedArticles) > 0 && !in_array($product['legacy']['articleNumber'], $restrictedArticles)) {
             return true;
         }
 
         // check if article manufacturer is valid for voucher
-        if ($voucher->getBindToSupplier() > 0 && $voucher->getBindToSupplier() != $product['legacy']['supplierId']) {
+        if ($restrictVoucher && $voucher->getBindToSupplier() > 0 && $voucher->getBindToSupplier() != $product['legacy']['supplierId']) {
             return true;
         }
 
